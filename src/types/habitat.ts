@@ -2,7 +2,35 @@ export type ModuleType = "cylinder" | "dome" | "cube" | "connector";
 
 export type Material = "aluminum" | "titanium" | "composite" | "carbon-fiber";
 
-export type ViewMode = "top" | "front" | "2d" | "3d";
+export type ViewMode = "top" | "front" | "2d" | "3d" | "interior";
+
+export type InteriorElementType = 
+  | "sleeping-pod" 
+  | "galley" 
+  | "workstation" 
+  | "airlock" 
+  | "medical-bay"
+  | "storage"
+  | "handrail"
+  | "fire-extinguisher"
+  | "emergency-exit"
+  | "oxygen-tank";
+
+export interface InteriorElement {
+  id: string;
+  type: InteriorElementType;
+  position: { x: number; y: number; z: number };
+  rotation: number;
+  scale?: number;
+}
+
+export interface SafetySystem {
+  fireSuppressionActive: boolean;
+  emergencyOxygenUnits: number;
+  emergencyExits: number;
+  medicalBays: number;
+  airlocks: number;
+}
 
 export interface HabitatModule {
   id: string;
@@ -19,6 +47,8 @@ export interface HabitatModule {
   material: Material;
   temperature: { min: number; max: number };
   name: string;
+  interiorElements?: InteriorElement[];
+  safetySystem?: SafetySystem;
 }
 
 export interface ModuleCalculations {

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ViewMode } from "@/types/habitat";
-import { Box, Layers, Maximize2, View } from "lucide-react";
+import { Box, Layers, Maximize2, View, Home } from "lucide-react";
 
 interface ViewSwitcherProps {
   currentView: ViewMode;
@@ -13,6 +13,7 @@ export const ViewSwitcher = ({ currentView, onViewChange }: ViewSwitcherProps) =
     { mode: "front", label: "Front View", icon: <View className="w-4 h-4" /> },
     { mode: "2d", label: "2D Layout", icon: <Maximize2 className="w-4 h-4" /> },
     { mode: "3d", label: "3D View", icon: <Box className="w-4 h-4" /> },
+    { mode: "interior", label: "Interior View", icon: <Home className="w-4 h-4" /> },
   ];
 
   return (

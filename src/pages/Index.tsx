@@ -6,7 +6,8 @@ import { PropertiesPanel } from "@/components/PropertiesPanel";
 import { CalculationsPanel } from "@/components/CalculationsPanel";
 import { Canvas2D } from "@/components/Canvas2D";
 import { Canvas3D } from "@/components/Canvas3D";
-import { HabitatModule, ModuleType, ViewMode } from "@/types/habitat";
+import { InteriorDesigner } from "@/components/InteriorDesigner";
+import { HabitatModule, ModuleType, ViewMode, InteriorElementType, InteriorElement } from "@/types/habitat";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -48,6 +49,14 @@ const Index = () => {
       material: "aluminum",
       temperature: { min: 18, max: 24 },
       name: `${type.charAt(0).toUpperCase() + type.slice(1)} Module`,
+      interiorElements: [],
+      safetySystem: {
+        fireSuppressionActive: true,
+        emergencyOxygenUnits: 2,
+        emergencyExits: 1,
+        medicalBays: 0,
+        airlocks: type === "connector" ? 1 : 0,
+      },
     };
 
     setModules([...modules, newModule]);
@@ -57,6 +66,47 @@ const Index = () => {
 
   const handleUpdateModule = (updatedModule: HabitatModule) => {
     setModules(modules.map((m) => (m.id === updatedModule.id ? updatedModule : m)));
+  };
+
+  const handleAddInteriorElement = (moduleId: string, elementType: InteriorElementType) => {
+    const module = modules.find((m) => m.id === moduleId);
+    if (!module) return;
+
+    const newElement: InteriorElement = {
+      id: `element-${Date.now()}`,
+      type: elementType,
+      position: { 
+        x: (Math.random() - 0.5) * 2, 
+        y: Math.random() * 2, 
+        z: (Math.random() - 0.5) * 2 
+      },
+      rotation: Math.random() * Math.PI * 2,
+      scale: 1,
+    };
+
+    const updatedModule: HabitatModule = {
+      ...module,
+      interiorElements: [...(module.interiorElements || []), newElement],
+      safetySystem: {
+        ...module.safetySystem!,
+        fireSuppressionActive: elementType === "fire-extinguisher" ? true : module.safetySystem!.fireSuppressionActive,
+        emergencyOxygenUnits: elementType === "oxygen-tank" 
+          ? (module.safetySystem!.emergencyOxygenUnits || 0) + 1 
+          : module.safetySystem!.emergencyOxygenUnits,
+        emergencyExits: elementType === "emergency-exit"
+          ? (module.safetySystem!.emergencyExits || 0) + 1
+          : module.safetySystem!.emergencyExits,
+        medicalBays: elementType === "medical-bay"
+          ? (module.safetySystem!.medicalBays || 0) + 1
+          : module.safetySystem!.medicalBays,
+        airlocks: elementType === "airlock"
+          ? (module.safetySystem!.airlocks || 0) + 1
+          : module.safetySystem!.airlocks,
+      },
+    };
+
+    handleUpdateModule(updatedModule);
+    toast.success(`${elementType.replace('-', ' ')} added to ${module.name}`);
   };
 
   return (
@@ -72,8 +122,8 @@ const Index = () => {
           <ShapePalette onSelectShape={handleAddModule} />
 
           <div className="flex-1">
-            {viewMode === "3d" ? (
-              <Canvas3D modules={modules} />
+            {viewMode === "3d" || viewMode === "interior" ? (
+              <Canvas3D modules={modules} showInterior={viewMode === "interior"} />
             ) : (
               <Canvas2D
                 modules={modules}
@@ -85,7 +135,15 @@ const Index = () => {
             )}
           </div>
 
-          <PropertiesPanel selectedModule={selectedModule} onUpdateModule={handleUpdateModule} />
+          <div className="space-y-4">
+            <PropertiesPanel selectedModule={selectedModule} onUpdateModule={handleUpdateModule} />
+            {(viewMode === "interior" || viewMode === "3d") && (
+              <InteriorDesigner 
+                selectedModule={selectedModule} 
+                onAddInteriorElement={handleAddInteriorElement} 
+              />
+            )}
+          </div>
         </div>
       </div>
 
