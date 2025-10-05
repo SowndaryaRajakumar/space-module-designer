@@ -2,7 +2,7 @@ export type ModuleType = "cylinder" | "dome" | "cube" | "connector";
 
 export type Material = "aluminum" | "titanium" | "composite" | "carbon-fiber";
 
-export type ViewMode = "top" | "front" | "2d" | "3d" | "interior";
+export type ViewMode = "top" | "front" | "2d" | "3d" | "interior" | "navigation";
 
 export type InteriorElementType = 
   | "sleeping-pod" 

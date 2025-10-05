@@ -7,6 +7,7 @@ import { CalculationsPanel } from "@/components/CalculationsPanel";
 import { Canvas2D } from "@/components/Canvas2D";
 import { Canvas3D } from "@/components/Canvas3D";
 import { InteriorDesigner } from "@/components/InteriorDesigner";
+import { NavigationMap } from "@/components/NavigationMap";
 import { HabitatModule, ModuleType, ViewMode, InteriorElementType, InteriorElement } from "@/types/habitat";
 import { toast } from "sonner";
 
@@ -122,8 +123,14 @@ const Index = () => {
           <ShapePalette onSelectShape={handleAddModule} />
 
           <div className="flex-1">
-            {viewMode === "3d" || viewMode === "interior" ? (
-              <Canvas3D modules={modules} showInterior={viewMode === "interior"} />
+            {viewMode === "navigation" ? (
+              <NavigationMap modules={modules} />
+            ) : viewMode === "3d" || viewMode === "interior" ? (
+              <Canvas3D 
+                modules={modules} 
+                showInterior={viewMode === "interior"} 
+                showAstronaut={viewMode === "3d"}
+              />
             ) : (
               <Canvas2D
                 modules={modules}

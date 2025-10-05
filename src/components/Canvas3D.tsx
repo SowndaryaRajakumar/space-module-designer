@@ -1,11 +1,13 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid, PerspectiveCamera, Text, Box, Sphere, Cylinder } from "@react-three/drei";
 import { HabitatModule, InteriorElement } from "@/types/habitat";
+import { AstronautAnimation } from "./AstronautAnimation";
 import * as THREE from "three";
 
 interface Canvas3DProps {
   modules: HabitatModule[];
   showInterior?: boolean;
+  showAstronaut?: boolean;
 }
 
 const InteriorElementMesh = ({ element, modulePosition }: { element: InteriorElement; modulePosition: { x: number; y: number; z: number } }) => {
@@ -107,7 +109,7 @@ const ModuleMesh = ({ module }: { module: HabitatModule }) => {
   );
 };
 
-export const Canvas3D = ({ modules, showInterior = false }: Canvas3DProps) => {
+export const Canvas3D = ({ modules, showInterior = false, showAstronaut = false }: Canvas3DProps) => {
   return (
     <div className="w-full h-full bg-canvas-bg rounded-lg border border-border overflow-hidden">
       <Canvas>
@@ -160,6 +162,9 @@ export const Canvas3D = ({ modules, showInterior = false }: Canvas3DProps) => {
             <lineBasicMaterial color="#06b6d4" opacity={0.5} transparent />
           </lineSegments>
         )}
+        
+        {/* Animated astronaut */}
+        {showAstronaut && <AstronautAnimation modules={modules} animate={true} />}
       </Canvas>
     </div>
   );
